@@ -96,36 +96,53 @@
     .nav-cta:hover { background: var(--green-l); }
 
     /* ═══════════════════════════════════════
-       HERO — fundo OFF-WHITE
+       HERO — fundo OFF-WHITE + imagem mascote
     ═══════════════════════════════════════ */
     .hero {
-      background: var(--bg-main);
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      align-items: stretch;
-      min-height: 88vh;
       position: relative;
       overflow: hidden;
+      min-height: 88vh;
+      display: grid;
+      grid-template-columns: 52% 48%;
+      align-items: stretch;
       border-bottom: 2px solid var(--border);
     }
-    /* decoração sutil no fundo claro */
+    /* imagem de fundo cobre todo o hero */
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: right center;
+      z-index: 0;
+    }
+    /* véu suave à esquerda para legibilidade do texto */
     .hero::before {
       content:'';
       position: absolute;
       inset: 0;
-      background:
-        radial-gradient(ellipse 60% 80% at 100% 50%, rgba(0,156,59,.08) 0%, transparent 65%),
-        radial-gradient(ellipse 40% 60% at 0% 100%, rgba(0,39,118,.05) 0%, transparent 60%);
+      z-index: 1;
+      background: linear-gradient(
+        100deg,
+        rgba(244,247,242,.97) 0%,
+        rgba(244,247,242,.92) 40%,
+        rgba(244,247,242,.55) 65%,
+        transparent 100%
+      );
       pointer-events: none;
     }
     .hero-text {
       position: relative;
-      padding: 4rem 3rem 4rem 6vw;
       z-index: 2;
+      padding: 4rem 3rem 4rem 6vw;
       display: flex;
       flex-direction: column;
       justify-content: center;
     }
+    /* coluna direita: espaço reservado para o boneco aparecer pelo bg */
+    .hero-spacer { position: relative; z-index: 2; }
+
     .hero-badge {
       display: inline-block;
       background: var(--green);
@@ -173,7 +190,7 @@
       display: flex;
       align-items: center;
       gap: .45rem;
-      background: var(--green-pale);
+      background: rgba(230,245,236,.9);
       border: 1px solid var(--border);
       color: var(--green-d);
       font-size: .77rem;
@@ -204,40 +221,13 @@
       align-items: center;
       gap: .4rem;
     }
-
-    /* ── Painel visual do produto no hero ── */
-    .hero-visual {
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      /* gradiente verde-pálido de fundo para harmonizar */
-      background: linear-gradient(145deg, #daf0e4 0%, #eef7f1 40%, #d4eaf8 100%);
-    }
-    /* arco decorativo atrás do produto */
-    .hero-visual::before {
-      content: '';
-      position: absolute;
-      bottom: -80px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 130%;
-      height: 130%;
-      border-radius: 50%;
-      background: radial-gradient(ellipse at 50% 80%, rgba(0,156,59,.13) 0%, transparent 65%);
-      pointer-events: none;
-    }
-    .hero-visual img {
-      position: relative;
-      z-index: 1;
+    /* tira do boneco em mobile — aparece abaixo do texto */
+    .hero-mobile-img {
+      display: none;
       width: 100%;
-      height: 100%;
+      max-height: 280px;
       object-fit: cover;
-      object-position: center 15%;
-      display: block;
-      /* leve sombra no próprio produto */
-      filter: drop-shadow(0 24px 48px rgba(0,60,20,.18));
+      object-position: 72% top;
     }
 
     /* ── SECTION BASE ── */
@@ -434,7 +424,18 @@
     .check { color: var(--green-d); font-weight: 700; }
     .cross { color: #c0392b; font-weight: 700; }
     .neutral { color: #9aaa9a; }
+    .rival { color: #c0392b; font-weight: 700; }  /* nome dos concorrentes em vermelho */
     .table-note { margin-top: .85rem; font-size: .71rem; color: var(--ink-soft); line-height: 1.65; }
+
+    /* howto subtitle */
+    .howto-subtitle {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--green-d);
+      font-style: italic;
+      margin-top: .3rem;
+      margin-bottom: 0;
+    }
 
     /* ═══════════════════════════════════════
        PRICING — cards iguais + responsivo
@@ -504,7 +505,7 @@
     .price-card ul li { padding: .28rem 0; font-size: .8rem; color: var(--ink-mid); display: flex; align-items: flex-start; gap: .45rem; border-bottom: 1px solid var(--border); }
     .price-card ul li:last-child { border-bottom: none; }
     .price-card ul li::before { content: '✓'; color: var(--green); font-weight: 900; flex-shrink: 0; }
-    .seal-img { width: 72px; margin: 0 auto .8rem; display: block; }
+    .seal-img { width: 120px; margin: 0 auto 1rem; display: block; }
 
     /* BOTÕES YAMPI
        #yampi-kit1 → link kit 1 unidade
@@ -776,15 +777,28 @@
     }
 
     @media (max-width: 900px) {
-      /* hero */
-      .hero { grid-template-columns: 1fr; min-height: auto; }
-      .hero-visual { display: none; }
-      .hero-text { padding: 3rem 6vw; text-align: center; align-items: center; }
+      /* hero — coluna única; imagem aparece como tira abaixo do texto */
+      .hero {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+      .hero-spacer { display: none; }
+      .hero::before {
+        /* em mobile o gradiente cobre tudo para legibilidade total */
+        background: rgba(244,247,242,.97);
+      }
+      .hero-text {
+        padding: 3rem 6vw 2rem;
+        text-align: center;
+        align-items: center;
+      }
       .hero-sub { text-align: center; }
       .hero-pills { justify-content: center; }
       .hero-actions { justify-content: center; flex-direction: column; align-items: center; }
+      /* mostra a tira do boneco */
+      .hero-mobile-img { display: block; }
 
-      /* pricing: 1 coluna centrada */
+      /* pricing */
       .pricing-grid {
         grid-template-columns: 1fr;
         max-width: 400px;
@@ -825,6 +839,7 @@
       .price-card-img { height: 120px; }
       .price-amount { font-size: 2rem; }
       .social-icons { flex-direction: column; }
+      .hero-mobile-img { max-height: 220px; }
     }
   </style>
 </head>
@@ -852,10 +867,18 @@
   <a href="#kits" class="nav-cta">Comprar Agora</a>
 </nav>
 
-<!-- ══ HERO (OFF-WHITE) ══ -->
+<!-- ══ HERO (OFF-WHITE + mascote) ══ -->
 <section class="hero" id="inicio">
+  <!-- imagem de fundo: cobre todo o hero, boneco aparece à direita -->
+  <img
+    src="PRIMEIRA-DOBRA-BOLSONARO.webp"
+    alt="Creme Dental Bolsonaro"
+    class="hero-bg"
+    loading="eager"
+  />
+
   <div class="hero-text">
-    <div class="hero-badge">&#127463;&#127479; Produto Nacional Premium</div>
+    <div class="hero-badge">&#127463;&#127479; Nossa bandeira, seu sorriso</div>
     <h1>Para garantir<br>o <em>Sorriso</em><br>do Brasil.</h1>
     <p class="hero-slogan">Para o Brasil voltar a sorrir</p>
     <p class="hero-sub">Dentes limpos, h&#225;lito refrescante e prote&#231;&#227;o contra c&#225;ries &#8212; com a f&#243;rmula que o Brasil merece.</p>
@@ -878,22 +901,17 @@
       <div class="hero-guarantee">&#128274; Compra 100% segura &amp; garantida</div>
     </div>
   </div>
-  <!-- imagem do produto com fundo verde-pálido -->
-  <div class="hero-visual">
-    <img
-      src="https://cremedentalbolsonaro.shop/wp-content/uploads/2025/10/01.webp"
-      alt="Creme Dental Bolsonaro"
-      loading="eager"
-    />
-  </div>
+
+  <!-- coluna direita: vazia — o boneco aparece pelo hero-bg -->
+  <div class="hero-spacer"></div>
 </section>
 
-<!-- BANNER único (apenas DOBRA-3) -->
+<!-- tira do boneco exibida APENAS em mobile, abaixo do texto -->
 <img
-  src="https://cremedentalbolsonaro.shop/wp-content/uploads/2025/10/DOBRA-3.webp"
-  alt="Creme Dental Bolsonaro &#8212; benef&#237;cios"
-  class="img-banner"
-  loading="lazy"
+  src="PRIMEIRA-DOBRA-BOLSONARO.webp"
+  alt="Creme Dental Bolsonaro"
+  class="hero-mobile-img"
+  loading="eager"
 />
 
 <!-- ══ BENEFITS (3×3) ══ -->
@@ -958,6 +976,7 @@
 <section class="howto" id="como-usar">
   <div class="section-label">Passo a Passo</div>
   <h2 class="section-title">4 Passos para o <span class="highlight">Sorriso Perfeito</span></h2>
+  <p class="howto-subtitle">Cuidado que vem da nossa terra.</p>
   <div class="steps-row">
     <div class="step anim">
       <h3>Coloque na escova</h3>
@@ -1029,9 +1048,9 @@
       <thead>
         <tr>
           <th>Crit&#233;rio</th>
-          <th class="col-bolso">Bolsonaro</th>
-          <th>L&#237;der de Mercado 1</th>
-          <th>L&#237;der de Mercado 2</th>
+          <th class="col-bolso">Creme Dental Bolsonaro</th>
+          <th><span class="rival">L&#237;der de Mercado 1</span></th>
+          <th><span class="rival">L&#237;der de Mercado 2</span></th>
         </tr>
       </thead>
       <tbody>
@@ -1236,7 +1255,7 @@
   </div>
 
   <div class="footer-bottom">
-    <span>2025 &copy; Bolsonaro Creme Dental &middot; Todos os direitos reservados</span>
+    <span>2026 &copy; Bolsonaro Creme Dental &middot; Todos os direitos reservados</span>
     <div class="footer-legal">
       <a href="#">Termos de Uso</a>
       <a href="#">Pol&#237;tica de Privacidade</a>
